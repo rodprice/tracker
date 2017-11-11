@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Tracker</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <style>
+     /* Always set the map height explicitly to define the size of the div
+      * element that contains the map. */
+     #map {
+         height: 100%;
+     }
+     /* Optional: Makes the sample page fill the window. */
+     html, body {
+         height: 100%;
+         margin: 0;
+         padding: 0;
+     }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+     function initMap() {
+         
+         var states = [
+             {time: '09:00:34',
+              position: {lat: 39.647717, lng: -104.8960225},
+              altitude: 3002,
+              heading: 90,
+              temperature: 10.0},
+             {time: '09:01:02',
+              position: {lat: 39.654717, lng: -104.800225},
+              altitude: 3002,
+              heading: 120,
+              temperature: 10.0},
+             {time: '09:02:21',
+              position: {lat: 39.669717, lng: -104.7200225},
+              altitude: 3002,
+              heading: 0,
+              temperature: 10.0},
+             {time: '09:04:00',
+              position: {lat: 39.697717, lng: -104.6960225},
+              altitude: 3002,
+              heading: 20.0,
+              temperature: 10.0}
+         ];
+         
+         var map = new google.maps.Map(document.getElementById('map'), {
+             center: states[0].position,
+             zoom: 12
+             /* mapTypeId: 'terrain'*/
+         });
+         
+         var infowindow = new google.maps.InfoWindow({
+             content: "null"
+         });
+
+         var markers = [];
+         for (let i=0; i<4; i++) {
+             markers[i] = new google.maps.Marker({
+                 position: states[i].position,
+                 map: map,
+                 icon: {
+                     path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+                     scale: 5,
+                     rotation: states[i].heading
+                 },
+                 title: states[i].time
+             });
+             markers[i].addListener('click', function() {
+                 infowindow.setContent(infocontent(states[i]));
+                 infowindow.open(map, markers[i]);
+             });
+         }
+
+         var path = new google.maps.Polyline({
+             path: states.map(function(state) { return state.position }),
+             geodesic: true,
+             strokeColor: "#808080",
+             strokeWeight: 2,
+             opacity: 0.5
+         });
+         path.setMap(map);
+     }
+     
+     function infocontent(state) {
+         return '<div id="content">' +
+                '<div id="siteNotice">' +
+                '</div>' +
+                '<h1 id="firstHeading" class="firstHeading">AD0YX</h1>' +
+                '<div id="bodyContent">' +
+                '<ul>' +
+                '<li><b>time</b>:' + state.time + '</li>' +
+                '<li><b>altitude</b>:' + state.altitude + ' meters</li>' +
+                '<li><b>heading</b>:' + state.heading + ' degrees north</li>' +
+                '<li><b>temperature</b>:' + state.temperature + ' degrees C</li>' +
+                '</ul>' +
+                '</div>' +
+                '</div>';
+     }
+     
+    </script>
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDJ2bgz4-c9OPxzUkXfvkZ9mUC-hndvhtY&callback=initMap">
+    </script>
+  </body>
+</html>
